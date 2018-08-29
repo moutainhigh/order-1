@@ -1,5 +1,6 @@
 package com.imooc.order.controller;
 
+import com.imooc.order.client.ProductClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -17,6 +18,9 @@ public class ClientController {
 
     @Autowired
     private LoadBalancerClient loadBalancerClient;
+
+    @Autowired
+    private ProductClient productClient;
 
     @GetMapping("/getProductMsg")
     public String getProductMsg(){
@@ -36,11 +40,18 @@ public class ClientController {
 //        String response = restTemplate.getForObject(url, String.class);
 
         //3、第三种方式（利用@LoadBalanced，可在restTemplate里使用应用名字）
-        String response = restTemplate.getForObject("http://PRODUCT/msg", String.class);
+//        String response = restTemplate.getForObject("http://PRODUCT/msg", String.class);
 
+
+        /**
+         * 引用Feign
+         * 1、引入spring-cloud-starter-feign依赖
+         * 2、在启动的主类上添加@EnableFeignClients
+         * 2、定义接口，注入@FeignClient(name = "product")，"product"为服务的名称
+         * 3、在接口中定义方法，@GetMapping("/msg")，"/msg"为服务提供的Restful API方法
+         */
+        String response = productClient.productMsg();
         log.info("response={}",response);
-
-        //2、第二种方式
 
 
         return  response;

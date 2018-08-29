@@ -9,6 +9,10 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: 123456
-    url: jdbc:mysql://127.0.0.1:3306/SpringCloud_Sell?characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3308/SpringCloud_Sell?characterEncoding=utf-8&useSSL=false
   jpa:
     show-sql: true
+#修改负载均衡类（在IRule接口上按住ctrl + alt +B选择不同的负载均衡，默认是RoundRobinRule[轮询]）
+PRODUCT:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
