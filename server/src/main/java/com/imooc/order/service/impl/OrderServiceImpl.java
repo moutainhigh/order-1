@@ -1,6 +1,7 @@
 package com.imooc.order.service.impl;
 
 import com.imooc.order.converter.OrderMaster2OrderDTOConverter;
+import com.imooc.order.dataobject.OrderDetail;
 import com.imooc.order.dataobject.OrderMaster;
 import com.imooc.order.dto.OrderDTO;
 import com.imooc.order.enums.OrderStatusEnum;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -24,8 +27,19 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderMasterRepository orderMasterRepository;
 
+//    @Autowired
+//    private ProductClient productClient;
+
     @Override
     public OrderDTO create(OrderDTO orderDTO) {
+        String orderId = KeyUtil.getUniqueKey();
+
+        //查询商品信息（调用商品详情）
+        List<String> productIdList = orderDTO.getOrderDetailList().stream()
+                .map(OrderDetail::getProductId)
+                .collect(Collectors.toList());
+
+
 
         //订单入库
         OrderMaster orderMaster = new OrderMaster();
