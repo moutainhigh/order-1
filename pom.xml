@@ -47,7 +47,7 @@
                 <version>${product-client.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.imooc.order.common</groupId>
+                <groupId>com.imooc</groupId>
                 <artifactId>order-common</artifactId>
                 <version>${order-common.version}</version>
             </dependency>
