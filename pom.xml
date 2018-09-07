@@ -42,11 +42,6 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>com.imooc.product.client</groupId>
-                <artifactId>product-client</artifactId>
-                <version>${product-client.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.imooc</groupId>
                 <artifactId>order-common</artifactId>
                 <version>${order-common.version}</version>

@@ -13,6 +13,6 @@ spring:
   jpa:
     show-sql: true
 #修改负载均衡类（在IRule接口上按住ctrl + alt +B选择不同的负载均衡，默认是RoundRobinRule[轮询]）
-PRODUCT:
-  ribbon:
-    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+#PRODUCT:
+#  ribbon:
+#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
