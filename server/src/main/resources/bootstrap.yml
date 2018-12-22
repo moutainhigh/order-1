@@ -26,3 +26,28 @@ management:
     web:
       exposure:
         include: bus-refresh
+
+#超时设置（由于用的是feign，feign底层是ribbon的封装，ribbon默认超时时间也是1s，需要设置ribbon的超时时间才可以让hystrix超时设置生效）
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 1000
+    #单独设置某个方法超时时间
+    getProductInfoList:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 1000
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 9000
+#Feign引入Hystrix实现熔断
+feign:
+  hystrix:
+    enabled: true
+#Hystrix Dashboard监控
+#management:
+#  context-path: /
