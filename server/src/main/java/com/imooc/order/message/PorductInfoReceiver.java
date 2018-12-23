@@ -25,7 +25,7 @@ public class PorductInfoReceiver {
     public void process(String message){
         List<ProductInfoOutput> productInfoOutputList = (List<ProductInfoOutput>)JsonUtil.fromJson(message,
                 new TypeReference<List<ProductInfoOutput>>() {});
-        log.info("从队列【{}】接收到消息：{}","roductInfo",productInfoOutputList);
+        log.info("从队列【{}】接收到消息：{}","productInfo",productInfoOutputList);
 
         // 存储到redis中
         for(ProductInfoOutput productInfoOutput : productInfoOutputList){
