@@ -34,7 +34,7 @@ public class HystrixController {
             @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "10"),
             @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000"),
             @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "60")
-    })
+    },fallbackMethod = "errorFallback")
     //@HystrixCommand
     @GetMapping("getProductInfoList")
     public String getProductInfoList(@RequestParam("number") Integer number){
@@ -43,7 +43,7 @@ public class HystrixController {
         }
 
 //        方式一：RestTemplate原生url访问
-//        return restTemplate.postForObject("http://127.0.0.1:8005/listForOrder",
+//        return restTemplate.postForObject("http://localhost:8090/product/product/listForOrder",
 //                Arrays.asList("1527165136839371483"),
 //                String.class);
 
@@ -51,12 +51,14 @@ public class HystrixController {
         return productClient.listForOrder(Arrays.asList("1527165136839371483")).toString();
     }
 
-    //fallback方法的返回值必须与HystrixCommand对应方法的返回值一致
-    private String fallback(){
+    // fallback方法的返回值必须与HystrixCommand对应方法的返回值一致
+    private String errorFallback(Integer number){
         return "太拥挤了，请稍后再试~~~";
+//        return "try again please";
     }
 
     private String defaultFallback(){
         return "系统默认提示：系统异常，请稍后再试~~~";
+//        return "system tips";
     }
 }

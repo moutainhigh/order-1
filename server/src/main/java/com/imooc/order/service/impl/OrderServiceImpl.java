@@ -13,12 +13,17 @@ import com.imooc.order.utils.KeyUtil;
 import com.imooc.product.client.ProductClient;
 import com.imooc.product.common.DecreaseStockInput;
 import com.imooc.product.common.ProductInfoOutput;
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,10 +68,10 @@ public class OrderServiceImpl implements OrderService {
         }
 
         //扣库存（调用商品服务）
-        List<DecreaseStockInput> decreaseStockInputList = orderDTO.getOrderDetailList().stream()
-                .map(e -> new DecreaseStockInput(e.getProductId(),e.getProductQuantity()))
-                .collect(Collectors.toList());
-        productClient.decreaseStock(decreaseStockInputList);
+//        List<DecreaseStockInput> decreaseStockInputList = orderDTO.getOrderDetailList().stream()
+//                .map(e -> new DecreaseStockInput(e.getProductId(),e.getProductQuantity()))
+//                .collect(Collectors.toList());
+//        productClient.decreaseStock(decreaseStockInputList);
 
         //订单入库
         OrderMaster orderMaster = new OrderMaster();
@@ -76,6 +81,29 @@ public class OrderServiceImpl implements OrderService {
         orderMaster.setOrderStatus(OrderStatusEnum.NEW.getCode());
         orderMaster.setPayStatus(PayStatusEnum.WAIT.getCode());
         orderMasterRepository.save(orderMaster);
+
         return orderDTO;
+    }
+
+    @Override
+    public String queryOrderNum(String productId) {
+        List<OrderDetail> orderDetailList = orderDetailRepository.findByProductId(productId);
+        if (!CollectionUtils.isEmpty(orderDetailList)) {
+            return "" + orderDetailList.size();
+        }
+        return "";
+    }
+
+    @Override
+    public String del(String productId) {
+        List<OrderDetail> orderDetailList = orderDetailRepository.findByProductId(productId);
+        List<OrderMaster> orderMasterList;
+        List<String> orderIdList = orderDetailList.stream()
+                .map(OrderDetail :: getOrderId)
+                .collect(Collectors.toList());
+        orderMasterList = orderMasterRepository.findByOrderIdIn(orderIdList);
+        orderMasterRepository.deleteInBatch(orderMasterList);
+        orderDetailRepository.deleteInBatch(orderDetailList);
+        return null;
     }
 }

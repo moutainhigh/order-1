@@ -22,7 +22,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone:  http://eureka1:8761/eureka,http://eureka2:8762/eureka
+      defaultZone:  http://localhost:8761/eureka,http://localhost:8762/eureka
   instance:
     prefer-ip-address: true
 #修改负载均衡类（在IRule接口上按住ctrl + alt +B选择不同的负载均衡，默认是RoundRobinRule[轮询]）
@@ -43,13 +43,13 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 3000
+            timeoutInMilliseconds: 1000
     #单独设置某个方法超时时间
-    getProductInfoList:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 3000
+#    getProductInfoList:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 3000
 ribbon:
   ReadTimeout: 10000
   ConnectTimeout: 9000

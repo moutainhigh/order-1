@@ -9,4 +9,13 @@ public interface OrderService {
      * @return
      */
     OrderDTO create(OrderDTO orderDTO);
+
+    /**
+     * 获取订单数量
+     * @param productId
+     * @return
+     */
+    String queryOrderNum(String productId);
+
+    String del(String productId);
 }
