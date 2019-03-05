@@ -199,7 +199,8 @@ public class SecKillServiceImpl implements SecKillService {
         }
 
         // 释放锁
-        distributedLock.releaseLock(productId, rs);
+        //distributedLock.releaseLock(productId, rs);
+        distributedLock.releaseLockWithLua(productId, rs);
         return "";
     }
 

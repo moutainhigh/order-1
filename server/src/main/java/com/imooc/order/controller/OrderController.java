@@ -56,4 +56,14 @@ public class OrderController {
     public String del(@RequestParam("productId") String productId){
         return orderService.del(productId);
     }
+
+    /**
+     * 完结订单
+     * @param orderId
+     * @return
+     */
+    @PostMapping("/finish")
+    public ResultVO<OrderDTO> finish(@RequestParam("orderId") String orderId) {
+        return ResultVOUtil.success(orderService.finish(orderId));
+    }
 }

@@ -18,4 +18,11 @@ public interface OrderService {
     String queryOrderNum(String productId);
 
     String del(String productId);
+
+    /**
+     * 完结订单
+     * @param orderId
+     * @return
+     */
+    OrderDTO finish(String orderId);
 }
