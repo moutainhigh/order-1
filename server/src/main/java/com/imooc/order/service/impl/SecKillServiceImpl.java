@@ -8,7 +8,6 @@ import com.imooc.order.service.RedisLock;
 import com.imooc.order.service.SecKillService;
 import com.imooc.order.utils.KeyUtil;
 import com.imooc.product.client.ProductClient;
-import com.imooc.product.common.DecreaseStockInput;
 import com.imooc.product.common.ProductInfoOutput;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +49,12 @@ public class SecKillServiceImpl implements SecKillService {
     private static final String PRODUCT_ID = "123456";
     private static final Integer STOCK = 150;
 
+    private static final String PRODUCT_STOCK_TEMPLATE = "product_stock_%s";
+    private static final String PRODUCT_STOCKSUM_TEMPLATE = "product_stocksum_%s";
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
     static
     {
         /**
@@ -64,13 +69,13 @@ public class SecKillServiceImpl implements SecKillService {
 
     private String queryMap(String productId)
     {
-//        return "国庆活动，皮蛋粥特价，限量份"
-//                + products.get(productId)
-//                +" 还剩：" + stock.get(productId)+" 份"
-//                +" 该商品成功下单用户数目："
-//                +  orders.size() +" 人" ;
-        return "秒杀活动，皮蛋粥特价0.01，限量份"
+        /*return "秒杀活动，皮蛋粥特价0.01，限量份"
                 + products.get(productId)
+                +" 还剩：" + queryStockNum(productId)+" 份"
+                +" 该商品成功下单用户数目："
+                +  queryOrderNum(productId) +" 人" ;*/
+        return "秒杀活动，皮蛋粥特价0.01，限量份"
+                + stringRedisTemplate.opsForValue().get(String.format(PRODUCT_STOCKSUM_TEMPLATE, productId))
                 +" 还剩：" + queryStockNum(productId)+" 份"
                 +" 该商品成功下单用户数目："
                 +  queryOrderNum(productId) +" 人" ;
@@ -83,99 +88,16 @@ public class SecKillServiceImpl implements SecKillService {
 
     @Override
     public String orderProductMockDiffUser(String productId) {
-        // 方式一
-        // 1.查询该商品库存，为0则活动结束。
-        /*int stockNum = stock.get(productId);
-        if (0 == stockNum) {
-            throw new ProductException(100, "活动结束");
-        } else {
-            // 2.下单（模拟不同用户openid）
-            orders.put(UUID.randomUUID().toString(), productId);
-            // 3.减库存
-            stockNum = stockNum - 1;
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            stock.put(productId, stockNum);
-        }*/
-
-        // 方式二
-        // 加锁
-        /*String currentValue = "" + System.currentTimeMillis() + TIMEOUT;
-        if (!redisLock.lock(productId, currentValue)) {
-            System.out.println("哎呦喂，人也太多了吧，换个姿势试试~");
-            return;
-        }
-        // 1.查询该商品库存，为0则活动结束。
-        int stockNum = stock.get(productId);
-        if (0 == stockNum) {
-            throw new ProductException(100, "活动结束");
-        } else {
-            // 2.下单（模拟不同用户openid）
-            orders.put(UUID.randomUUID().toString(), productId);
-            // 3.减库存
-            stockNum = stockNum - 1;
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            stock.put(productId, stockNum);
-        }
-        // 释放锁
-        redisLock.unlock(productId, currentValue);*/
-
-
-        // 方式三
-        // 加锁
-        /*String info = "";
-        long v = System.currentTimeMillis() + TIMEOUT;
-        String currentValue = "" + v;
-        if (!redisLock.lock(productId, currentValue)) {
-            info = "哎呦喂，人也太多了吧，换个姿势试试~";
-            System.out.println(info);
-            return info;
-        }
-        // 1.查询该商品库存，为0则活动结束。
-        int stockNum = queryStockNum(productId);
-        if (0 == stockNum) {
-            // 删除key
-            redisTemplate.opsForValue().getOperations().delete(productId);
-            //throw new ProductException(100, "活动结束");
-            info = "秒杀结束";
-            System.out.println(info);
-            return info;
-        } else {
-            // 2.下单（模拟不同用户openid）
-            orders.put(UUID.randomUUID().toString(), productId);
-            // 3.减库存
-            stockNum = stockNum - 1;
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            // 扣库存
-            DecreaseStockInput decreaseStockInput = new DecreaseStockInput(productId, 1);
-            productService.decreaseStock(Arrays.asList(decreaseStockInput));
-        }
-
-        // 释放锁
-        redisLock.unlock(productId, currentValue);*/
-
         // 1.查询该商品库存，为0则活动结束。
         String info = "";
         int stockNum = queryStockNum(productId);
         if (0 == stockNum) {
-            info = "秒杀结束";
+            info = "秒杀结束，耗时：";
             System.out.println(info);
             return info;
         }
 
-        String rs = distributedLock.acquireLock(productId, 200, 1000);
+        String rs = distributedLock.acquireLock(productId, 200, 500);
         if (null == rs) {
             info = "哎呦喂，人也太多了吧，换个姿势试试~";
             System.out.println(info);
@@ -247,8 +169,10 @@ public class SecKillServiceImpl implements SecKillService {
             return "0";
         }
         int stockNum = queryStockNum(productId);
-        if ((stockNum + Integer.parseInt(orderNum)) != stock.get(PRODUCT_ID) ) {
-            return "" + (stock.get(PRODUCT_ID) - stockNum);
+        Integer stockSum = Integer.parseInt(stringRedisTemplate.opsForValue().get(String.format(PRODUCT_STOCKSUM_TEMPLATE, productId)));
+        Integer stock = Integer.parseInt(stringRedisTemplate.opsForValue().get(String.format(PRODUCT_STOCK_TEMPLATE, productId)));
+        if (stockSum - stock != Integer.parseInt(orderNum)) {
+            return "" + (stockSum - stock);
         }
         return orderNum;
     }

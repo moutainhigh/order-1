@@ -1,6 +1,8 @@
 package com.imooc.order.controller;
 
 import com.imooc.order.service.SecKillService;
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/skill")
 @Slf4j
+@DefaultProperties(defaultFallback = "defaultFallback")
 public class SecKillController {
 
     @Autowired
@@ -33,6 +36,7 @@ public class SecKillController {
     }
 
     @GetMapping("/order/{productId}")
+    @HystrixCommand
     public String order(@PathVariable("productId") String productId) throws Exception {
         log.info("@skill request, productId:" + productId);
         String info = secKillService.orderProductMockDiffUser(productId);
@@ -40,6 +44,10 @@ public class SecKillController {
             return info;
         }
         return secKillService.querySecKillProductInfo(productId);
+    }
+
+    private String defaultFallback(){
+        return "系统默认提示：系统异常，请稍后再试~~~";
     }
 
 }

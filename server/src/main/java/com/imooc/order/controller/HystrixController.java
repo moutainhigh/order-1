@@ -35,14 +35,14 @@ public class HystrixController {
             @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "10000"),
             @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "60")
     },fallbackMethod = "errorFallback")
-    //@HystrixCommand
+    //@HystrixCommand(fallbackMethod = "errorFallback")
     @GetMapping("getProductInfoList")
     public String getProductInfoList(@RequestParam("number") Integer number){
         if (number % 2 == 0){
             return "success";
         }
 
-//        方式一：RestTemplate原生url访问
+        // 方式一：RestTemplate原生url访问
 //        return restTemplate.postForObject("http://localhost:8090/product/product/listForOrder",
 //                Arrays.asList("1527165136839371483"),
 //                String.class);
@@ -53,7 +53,7 @@ public class HystrixController {
 
     // fallback方法的返回值必须与HystrixCommand对应方法的返回值一致
     private String errorFallback(Integer number){
-        return "太拥挤了，请稍后再试~~~";
+        return "哎哟喂，太拥挤了，请稍后再试~~~";
 //        return "try again please";
     }
 

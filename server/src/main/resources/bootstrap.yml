@@ -45,7 +45,7 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 1000
+            timeoutInMilliseconds: 3000
     #单独设置某个方法超时时间
 #    getProductInfoList:
 #      execution:

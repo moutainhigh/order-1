@@ -109,7 +109,11 @@ public class OrderServiceImpl implements OrderService {
         orderMasterList = orderMasterRepository.findByOrderIdIn(orderIdList);
         orderMasterRepository.deleteInBatch(orderMasterList);
         orderDetailRepository.deleteInBatch(orderDetailList);
-        return null;
+
+        // 修改库存信息
+        // 修改redis中的记录信息
+
+        return String.format("商品Id[%s]的订单删除成功", productId);
     }
 
     @Override
