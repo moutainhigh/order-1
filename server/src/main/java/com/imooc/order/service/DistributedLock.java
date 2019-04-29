@@ -1,6 +1,7 @@
 package com.imooc.order.service;
 
 import com.imooc.order.utils.JedisConnectionUtil;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;

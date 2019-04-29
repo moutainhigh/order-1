@@ -9,6 +9,7 @@ import com.imooc.order.service.SecKillService;
 import com.imooc.order.utils.KeyUtil;
 import com.imooc.product.client.ProductClient;
 import com.imooc.product.common.ProductInfoOutput;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -97,7 +98,7 @@ public class SecKillServiceImpl implements SecKillService {
             return info;
         }
 
-        String rs = distributedLock.acquireLock(productId, 200, 500);
+        String rs = distributedLock.acquireLock(productId, 200, 700);
         if (null == rs) {
             info = "哎呦喂，人也太多了吧，换个姿势试试~";
             System.out.println(info);
