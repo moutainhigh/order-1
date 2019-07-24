@@ -21,10 +21,11 @@ public class UnitTest extends Thread {
         }
     }
 
-    public static void main (String arg[]) {
+    // mvn package打包报错暂时注释
+    /*public static void main (String arg[]) {
         UnitTest unitTest = new UnitTest();
         for (int i = 0; i < 10; i++) {
             new Thread(unitTest, "tName:" + i).start();
         }
-    }
+    }*/
 }

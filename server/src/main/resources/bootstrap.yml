@@ -67,3 +67,5 @@ logging:
 #Hystrix Dashboard监控
 #management:
 #  context-path: /
+server:
+  port: 8081

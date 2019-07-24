@@ -9,7 +9,8 @@ import java.util.concurrent.TimeUnit;
 
 public class RedissonLock {
 
-    public static void main (String arg[]) {
+    // mvn package打包报错暂时注释
+    /*public static void main (String arg[]) {
         Config config = new Config();
         // 单机版的redis
         config.useSingleServer().setAddress("redis://172.20.102.80:6379");
@@ -26,5 +27,5 @@ public class RedissonLock {
             rLock.unlock();
             redissonClient.shutdown();
         }
-    }
+    }*/
 }

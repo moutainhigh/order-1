@@ -2,7 +2,7 @@
 echo 开始打包.............................................
 call mvn clean package -Dmaven.test.skip=true -U
 echo 开始制作镜像.........................................
-call docker build -t hub.c.163.com/zoomzlin/springcloud/order .
+call docker build -t registry.cn-shenzhen.aliyuncs.com/springcloud-zoomz/order .
 echo 将镜像推送到镜像仓库.........................................
-call docker push hub.c.163.com/zoomzlin/springcloud/order
+call docker push registry.cn-shenzhen.aliyuncs.com/springcloud-zoomz/order
 echo package->build->push success!
