@@ -6,4 +6,7 @@ ADD server/target/*.jar app.jar
 
 EXPOSE 8081
 
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+COPY  ./agent/ /agent/
+COPY  ./start.sh  start.sh
+
+CMD ["sh","start.sh"]
