@@ -1,73 +1,81 @@
-spring:
-  application:
-    name: order
-  cloud:
-    config:
-      discovery:
-        enabled: true
-        service-id: CONFIG
-      profile: dev
-    stream:
-      bindings:
-        input:
-          group: order
-          content-type: application/json
-  zipkin:
-    base-url: http://zipkin:9411/
-#    base-url: http://localhost:9411/
-    sender:
-      type: web
-#  采样率，这个参数的意思是抓取100%的日志，只有通过抓取日志，才能获知依赖关系,一般在开发环境，该值设置为1，生产环境视情况而定
-  sleuth:
-    sampler:
-      probability: 1
-  jpa:
-    database-platform: org.hibernate.dialect.MySQL5Dialect
-eureka:
-  client:
-    service-url:
-      defaultZone:  http://eureka1:8761/eureka,http://eureka2:8762/eureka
-  instance:
-    prefer-ip-address: true
-#修改负载均衡类（在IRule接口上按住ctrl + alt +B选择不同的负载均衡，默认是RoundRobinRule[轮询]）
-#ORDER:
-#  ribbon:
-#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: bus-refresh
-
-#超时设置（由于用的是feign，feign底层是ribbon的封装，ribbon默认超时时间也是1s，需要设置ribbon的超时时间才可以让hystrix超时设置生效）
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 3000
-    #单独设置某个方法超时时间
-#    getProductInfoList:
+#spring:
+#  application:
+#    name: order
+##  cloud:
+##    config:
+##      discovery:
+##        enabled: true
+##        service-id: CONFIG
+##      profile: dev
+#    stream:
+#      bindings:
+#        input:
+#          group: order
+#          content-type: application/json
+#  zipkin:
+#    base-url: http://zipkin:9411/
+##    base-url: http://localhost:9411/
+#    sender:
+#      type: web
+##  采样率，这个参数的意思是抓取100%的日志，只有通过抓取日志，才能获知依赖关系,一般在开发环境，该值设置为1，生产环境视情况而定
+#  sleuth:
+#    sampler:
+#      probability: 1
+#  jpa:
+#    database-platform: org.hibernate.dialect.MySQL5Dialect
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone:  http://eureka1:8761/eureka,http://eureka2:8762/eureka
+#  instance:
+#    prefer-ip-address: true
+##修改负载均衡类（在IRule接口上按住ctrl + alt +B选择不同的负载均衡，默认是RoundRobinRule[轮询]）
+##ORDER:
+##  ribbon:
+##    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: bus-refresh
+#
+##超时设置（由于用的是feign，feign底层是ribbon的封装，ribbon默认超时时间也是1s，需要设置ribbon的超时时间才可以让hystrix超时设置生效）
+#hystrix:
+#  command:
+#    default:
 #      execution:
 #        isolation:
 #          thread:
 #            timeoutInMilliseconds: 3000
-ribbon:
-  ReadTimeout: 10000
-  ConnectTimeout: 9000
-#Feign引入Hystrix实现熔断
-feign:
-  hystrix:
-    enabled: true
+#    #单独设置某个方法超时时间
+##    getProductInfoList:
+##      execution:
+##        isolation:
+##          thread:
+##            timeoutInMilliseconds: 3000
+#ribbon:
+#  ReadTimeout: 10000
+#  ConnectTimeout: 9000
+##Feign引入Hystrix实现熔断
+#feign:
+#  hystrix:
+#    enabled: true
+#
+##日志级别
+#logging:
+#  level:
+#    org.springframework.cloud.openfeign: debug
+##Hystrix Dashboard监控
+##management:
+##  context-path: /
+#server:
+#  port: 8081
 
-#日志级别
-logging:
-  level:
-    org.springframework.cloud.openfeign: debug
-#Hystrix Dashboard监控
-#management:
-#  context-path: /
-server:
-  port: 8081
+app:
+  id: order
+apollo:
+  cluster: order-cluster
+  meta: http://172.20.102.122:8080
+  bootstrap:
+    enabled: true

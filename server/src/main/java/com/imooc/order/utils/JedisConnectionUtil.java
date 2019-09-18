@@ -17,7 +17,7 @@ public class JedisConnectionUtil {
     static {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxTotal(100);
-        pool = new JedisPool(jedisPoolConfig, "172.20.102.94", 6379);
+        pool = new JedisPool(jedisPoolConfig, "172.20.102.122", 6379);
     }
 
     public static Jedis getJedis() {
